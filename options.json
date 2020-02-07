@@ -123,7 +123,7 @@
     - alwaysVisible: boolean, always show download button (defaults to download the current folder)
     */
     "download": {
-        "enabled": false,
+        "enabled": true,
         "type": "php-tar",
         "packageName": null,
         "alwaysVisible": false
@@ -320,7 +320,7 @@
     - checkboxes: boolean, show a checkbox on mouse over item
     */
     "select": {
-        "enabled": false,
+        "enabled": true,
         "clickndrag": true,
         "checkboxes": true
     },
