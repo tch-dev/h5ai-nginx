@@ -11,8 +11,6 @@ RUN apt update && \
 	rm -f /etc/nginx/conf.d/* /tmp/* && \
 	usermod -aG www-data nginx
 
-EXPOSE 80
-
 # Fix data location
 COPY class-setup.php /h5ai/_h5ai/private/php/core/class-setup.php
 
