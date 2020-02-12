@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
 	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip && \
 	wget -O /tmp/h5ai.zip https://release.larsjung.de/h5ai/h5ai-0.29.0.zip && \
+	mkdir /repository && \
 	unzip /tmp/h5ai.zip -d /h5ai && \
 	chown -R www-data: /h5ai/ && \
 	rm -f /etc/nginx/conf.d/* /tmp/* && \
