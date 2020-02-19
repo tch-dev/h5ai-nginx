@@ -126,7 +126,7 @@
         "enabled": true,
         "type": "php-tar",
         "packageName": null,
-        "alwaysVisible": false
+        "alwaysVisible": true
     },
 
     /*
@@ -263,7 +263,6 @@
             "txt-hpp": 3,
             "txt-install": 1,
             "txt-js": 3,
-            "txt-json": 3,
             "txt-less": 3,
             "txt-license": 1,
             "txt-log": 1,
