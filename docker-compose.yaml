@@ -12,7 +12,7 @@ services:
       - ./types.json:/h5ai/_h5ai/private/conf/types.json
       - ./h5ai-nginx.conf:/etc/nginx/conf.d/h5ai-nginx.conf
     ports:
-      - 10000:80/tcp
+      - 10001:80/tcp
 volumes:
   h5ai:
     driver: local
