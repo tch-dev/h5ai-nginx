@@ -22,6 +22,8 @@ COPY h5ai-nginx.conf /etc/nginx/conf.d/h5ai-nginx.conf
 COPY entrypoint.sh /root/entrypoint.sh
 RUN chmod +x /root/entrypoint.sh
 
+RUN apt install curl -y 
+
 COPY options.json /h5ai/_h5ai/private/conf/options.json
 COPY types.json /h5ai/_h5ai/private/conf/types.json 
 
