@@ -5,11 +5,17 @@ RUN cd h5ai && npm install && npm run build
 RUN mv $(ls -1 /h5ai/build/*.zip) /h5ai/build/h5ai.zip
 RUN ls /h5ai/build/
 
+# Build the form page
+COPY repo-guide-form/ /repo-guide-form 
+RUN mkdir /redirects && cd repo-guide-form && npm install && npm run build
+
+
 FROM nginx:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=0 /h5ai/build/h5ai.zip /tmp/h5ai.zip
+COPY --from=0 /redirects /redirects
 
 RUN apt update && \
 	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip zip && \
