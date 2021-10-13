@@ -1,14 +1,15 @@
 FROM node:14-alpine
 RUN apk add --no-cache git
 RUN git clone https://github.com/sourcifyeth/h5ai.git
-# RUN git clone https://github.com/sourcifyeth/h5ai.git
 RUN cd h5ai && npm install && npm run build 
-RUN ls /h5ai/build
+RUN mv $(ls -1 /h5ai/build/*.zip) /h5ai/build/h5ai.zip
+RUN ls /h5ai/build/
+
 FROM nginx:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY --from=0 /h5ai/build/h5ai-0.30.0+002~bbf4842.zip /tmp/h5ai.zip
+COPY --from=0 /h5ai/build/h5ai.zip /tmp/h5ai.zip
 
 RUN apt update && \
 	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip zip && \
