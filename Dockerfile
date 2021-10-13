@@ -1,12 +1,17 @@
+FROM node:14-alpine
+RUN apk add --no-cache git
+RUN git clone https://github.com/sourcifyeth/h5ai.git
+# RUN git clone https://github.com/sourcifyeth/h5ai.git
+RUN cd h5ai && npm install && npm run build 
+RUN ls /h5ai/build
 FROM nginx:latest
-MAINTAINER Valentin DEVILLE <contact@valentin-deville.eu>
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY h5ai-0.29.2+042~d81d8a9.zip /tmp/h5ai.zip
+COPY --from=0 /h5ai/build/h5ai-0.30.0+002~bbf4842.zip /tmp/h5ai.zip
 
 RUN apt update && \
-	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip && \
+	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip zip && \
 	mkdir /repository && \
 	unzip /tmp/h5ai.zip -d /h5ai && \
 	chown -R www-data: /h5ai/ && \

@@ -1,13 +1,14 @@
 version: "3.3"
 services:
-  h5ai:
+  h5ai-test:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
     container_name: repository
     volumes:
-      - ../repository:/data/repository
+      - ./redirects/:/redirects/
+      - ./repository:/data/
       - ./options.json:/h5ai/_h5ai/private/conf/options.json
       - ./types.json:/h5ai/_h5ai/private/conf/types.json
       - ./h5ai-nginx.conf:/etc/nginx/conf.d/h5ai-nginx.conf
