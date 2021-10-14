@@ -40,6 +40,4 @@ RUN apt install curl -y
 COPY options.json /h5ai/_h5ai/private/conf/options.json
 COPY types.json /h5ai/_h5ai/private/conf/types.json 
 
-VOLUME /h5ai
-
 CMD ["bash", "/root/entrypoint.sh"] 
