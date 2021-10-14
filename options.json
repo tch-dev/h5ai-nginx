@@ -407,7 +407,7 @@
     - ignorecase: boolean, sort ignorecase
     */
   "tree": {
-    "enabled": false,
+    "enabled": true,
     "show": true,
     "maxSubfolders": 50,
     "naturalSort": true,
