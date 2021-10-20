@@ -1,15 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useRef, useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { Alert, Button, Card, Form, Spinner } from "react-bootstrap";
 import "./App.scss";
 import chains from "./chains";
 
 function App() {
   const [selectedMatch, setSelectedMatch] = useState("full_match");
   const [address, setAddress] = useState();
-  const [chainId, setChainId] = useState(1);
+  const [chainId, setChainId] = useState("1");
   const [showValidationResults, setShowValidationResults] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
 
   const formRef = useRef();
   const matches = [
@@ -22,6 +24,7 @@ function App() {
   };
 
   const handleSubmit = (e) => {
+    setIsNotFound(false);
     e.preventDefault();
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
@@ -31,7 +34,21 @@ function App() {
     }
 
     const uri = generateRepoURI(address, chainId, selectedMatch);
-    window.location.href = uri;
+    // Look ahead if contract exists.
+    setIsLoading(true);
+    fetch(uri, { redirect: "follow" })
+      .then((res) => {
+        setIsLoading(false);
+        if (res.ok) {
+          window.location.href = uri; // Redirect to repo address;
+        } else {
+          setIsNotFound(true);
+        }
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setIsNotFound(true);
+      });
   };
 
   const handleAddressChange = (e) => {
@@ -48,6 +65,15 @@ function App() {
     setSelectedMatch(e.target.value);
   };
 
+  const spinner = (
+    <Spinner
+      as="span"
+      animation="border"
+      size="sm"
+      role="status"
+      aria-hidden="true"
+    />
+  );
   return (
     <div className="App">
       <Card className="card mx-6">
@@ -70,8 +96,20 @@ function App() {
           validated={showValidationResults}
           onSubmit={handleSubmit}
           ref={formRef}
+          className="mt-4"
         >
-          <Form.Group className="mt-4" controlId="form-address">
+          <Alert
+            variant="danger"
+            onClose={() => setIsNotFound(false)}
+            dismissible
+            hidden={!isNotFound}
+            className="text-center"
+          >
+            <p>Contract not found in Sourcify repository.</p>
+            <p> Please check address, chain, and match type</p>
+          </Alert>
+
+          <Form.Group controlId="form-address">
             <Form.Label className="label">Contract Address</Form.Label>
             <Form.Control
               type="text"
@@ -112,10 +150,9 @@ function App() {
               aria-label="select chain"
             >
               {matches.map((match, idx) => (
-                <div>
+                <div key={`match-key-${idx}`}>
                   <Form.Check.Input
                     id={`match-${idx}`}
-                    key={`match-key-${idx}`}
                     value={match.value}
                     type="radio"
                     className="mb-4 me-2 match-radio"
@@ -143,7 +180,7 @@ function App() {
             size="lg"
             style={{ width: "100%" }}
           >
-            Submit
+            {isLoading ? spinner : "Submit"}
           </Button>
         </Form>
       </Card>
