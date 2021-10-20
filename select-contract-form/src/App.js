@@ -1,15 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import "./App.css";
+import "./App.scss";
 import chains from "./chains";
 
 function App() {
   const [selectedMatch, setSelectedMatch] = useState("full_match");
   const [address, setAddress] = useState();
   const [chainId, setChainId] = useState(1);
-  const [validated, setValidated] = useState(false);
+  const [showValidationResults, setShowValidationResults] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
 
+  const formRef = useRef();
   const matches = [
     { name: "Full Match", value: "full_match" },
     { name: "Partial Match", value: "partial_match" },
@@ -24,7 +26,7 @@ function App() {
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
       e.stopPropagation();
-      setValidated(true);
+      setShowValidationResults(true);
       return;
     }
 
@@ -32,22 +34,51 @@ function App() {
     window.location.href = uri;
   };
 
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+    e.target.value
+      ? setShowValidationResults(true)
+      : setShowValidationResults(false);
+    formRef.current.checkValidity()
+      ? setIsFormValid(true)
+      : setIsFormValid(false);
+  };
+
+  const handleSelectMatch = (e) => {
+    setSelectedMatch(e.target.value);
+  };
+
   return (
     <div className="App">
-      <Card className="card">
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <div className="mb-3">
-            {" "}
-            Enter the contract details you want to see{" "}
+      <Card className="card mx-6">
+        <div className="px-4 container center text-center column">
+          <img
+            src={`${process.env.PUBLIC_URL}/logo.svg`}
+            className="m-2 logo"
+            alt="Sourcify logo"
+          />
+          <div style={{ fontSize: "32px", fontWeight: "bold" }}>
+            Contract Repository
           </div>
-          <Form.Group className="mb-3" controlId="form-address">
+          <div className="mb-3 text-center">
+            {" "}
+            Enter the contract details to view source code and metadata{" "}
+          </div>
+        </div>
+        <Form
+          noValidate
+          validated={showValidationResults}
+          onSubmit={handleSubmit}
+          ref={formRef}
+        >
+          <Form.Group className="mt-4" controlId="form-address">
             <Form.Label className="label">Contract Address</Form.Label>
             <Form.Control
               type="text"
               placeholder="0x2fa5b..."
               required
               pattern="0x[a-fA-F0-9]{40}$"
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={handleAddressChange}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   handleSubmit(e);
@@ -58,7 +89,7 @@ function App() {
               Please provide a valid address
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="mb-3" controlId="form-chain">
+          <Form.Group className="mt-4" controlId="form-chain">
             <Form.Label className="label">Chain</Form.Label>
             <Form.Select
               aria-label="select chain"
@@ -74,29 +105,40 @@ function App() {
               })}
             </Form.Select>
           </Form.Group>
-          <Form.Group className="mb-3 match-select-container">
-            {matches.map((match, idx) => (
-              <Button
-                key={idx}
-                id={`match-${idx}`}
-                type="radio"
-                variant={
-                  selectedMatch === match.value ? "primary" : "outline-primary"
-                }
-                name="matches"
-                value={match.value}
-                checked={selectedMatch === match.value}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setSelectedMatch(e.currentTarget.value);
-                }}
-              >
-                {match.name}
-              </Button>
-            ))}
+          <Form.Group className="mt-4">
+            <Form.Label className="label">Match Type</Form.Label>
+            <Form.Check
+              className="match-select-container"
+              aria-label="select chain"
+            >
+              {matches.map((match, idx) => (
+                <div>
+                  <Form.Check.Input
+                    id={`match-${idx}`}
+                    key={`match-key-${idx}`}
+                    value={match.value}
+                    type="radio"
+                    className="mb-4 me-2 match-radio"
+                    checked={selectedMatch === match.value}
+                    onChange={handleSelectMatch}
+                    onClick={handleSelectMatch}
+                  />
+                  <Form.Check.Label
+                    className={`match-radio ${
+                      selectedMatch === match.value ? "selected-radio" : ""
+                    }`}
+                    htmlFor={`match-${idx}`}
+                  >
+                    {match.name}
+                  </Form.Check.Label>
+                </div>
+              ))}
+            </Form.Check>
           </Form.Group>
           <Button
-            variant="success"
+            className="mt-2"
+            variant="primary"
+            disabled={!isFormValid}
             type="submit"
             size="lg"
             style={{ width: "100%" }}
