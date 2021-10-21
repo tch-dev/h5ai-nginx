@@ -6,8 +6,8 @@ RUN mv $(ls -1 /h5ai/build/*.zip) /h5ai/build/h5ai.zip
 RUN ls /h5ai/build/
 
 # Build the form page
-COPY repo-guide-form/ /repo-guide-form 
-RUN mkdir /redirects && cd repo-guide-form && npm install && npm run build
+COPY select-contract-form/ /select-contract-form 
+RUN mkdir /redirects && cd select-contract-form && npm install && npm run build
 
 
 FROM nginx:latest
