@@ -9,14 +9,15 @@ RUN ls /h5ai/build/
 COPY select-contract-form/ /select-contract-form 
 RUN mkdir /redirects && cd select-contract-form && npm install && npm run build
 
-
-FROM nginx:latest
+# Specific version to avoid apt version change
+FROM nginx:1.20.2
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY --from=0 /h5ai/build/h5ai.zip /tmp/h5ai.zip
 COPY --from=0 /redirects /redirects
 
+# Avoid version mismatch on php-fpm
 RUN apt update && \
 	apt install -y --no-install-recommends php-fpm apache2-utils wget ca-certificates unzip zip && \
 	mkdir /repository && \
@@ -30,6 +31,8 @@ COPY class-setup.php /h5ai/_h5ai/private/php/core/class-setup.php
 
 # Create nginx configuration
 COPY h5ai-nginx.conf /etc/nginx/conf.d/h5ai-nginx.conf
+
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy entrypoint
 COPY entrypoint.sh /root/entrypoint.sh
