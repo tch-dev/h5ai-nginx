@@ -50,6 +50,7 @@ const chains = [
     label: "Boba Network Rinkeby Testnet",
     id: 28,
   },
+  { value: "velas", label: "Velas EVM Mainnet", id: 106 },
 ];
 
 export default chains;
