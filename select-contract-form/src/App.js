@@ -1,8 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Button, Card, Form, Spinner } from "react-bootstrap";
 import "./App.scss";
-import chains from "./chains";
 
 function App() {
   const [selectedMatch, setSelectedMatch] = useState("full_match");
@@ -12,12 +11,25 @@ function App() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNotFound, setIsNotFound] = useState(false);
+  const [chains, setChains] = useState();
 
   const formRef = useRef();
   const matches = [
     { name: "Full Match", value: "full_match" },
     { name: "Partial Match", value: "partial_match" },
   ];
+
+  useEffect(() => {
+    const getSourcifyChains = async () => {
+      const chainsArray = await (
+        await fetch(`http://sourcify.dev/server/chains`)
+      ).json();
+      return chainsArray;
+    };
+    getSourcifyChains()
+      .then((chains) => setChains(chains))
+      .catch((err) => alert(err));
+  }, []);
 
   const generateRepoURI = (address, chainId, match) => {
     return `/contracts/${match}/${chainId}/${address}`;
@@ -74,6 +86,23 @@ function App() {
       aria-hidden="true"
     />
   );
+
+  if (!chains) {
+    return (
+      <div
+        className="d-flex align-items-center justify-content-center flex-column"
+        style={{ height: "100vh" }}
+      >
+        <Spinner
+          as="span"
+          animation="border"
+          role="status"
+          aria-hidden="true"
+        />
+        <div className="mt-4">Fetching Sourcify chains</div>
+      </div>
+    );
+  }
   return (
     <div className="App">
       <Card className="card mx-6">
@@ -135,9 +164,9 @@ function App() {
             >
               {chains.map((chainObj, i) => {
                 return (
-                  <option key={`chain-option-${i}`} value={chainObj.id}>
+                  <option key={`chain-option-${i}`} value={chainObj.chainId}>
                     {" "}
-                    {chainObj.label}{" "}
+                    {chainObj.name}{" "}
                   </option>
                 );
               })}
