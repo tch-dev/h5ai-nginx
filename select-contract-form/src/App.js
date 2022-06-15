@@ -134,7 +134,7 @@ function App() {
             hidden={!isNotFound}
             className="text-center"
           >
-            <p>Contract not found in Sourcify repository.</p>
+            <p>Contract not found in Sourcify repository</p>
             <p> Please check address, chain, and match type</p>
           </Alert>
 
