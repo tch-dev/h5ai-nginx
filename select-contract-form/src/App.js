@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
     const getSourcifyChains = async () => {
       const chainsArray = await (
-        await fetch(`http://sourcify.dev/server/chains`)
+        await fetch(`https://trustcontract.dev/server/chains`)
       ).json();
       return chainsArray;
     };
@@ -32,7 +32,7 @@ function App() {
   }, []);
 
   const generateRepoURI = (address, chainId, match) => {
-    return `/contracts/${match}/${chainId}/${address}`;
+    return `/contracts/${match}/${chainId}/${address}/`;
   };
 
   const handleSubmit = (e) => {
